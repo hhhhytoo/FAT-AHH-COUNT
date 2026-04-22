@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ COUNT IT FAT AHH ⚡</title>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      font-family: 'Segoe UI', 'Arial Black', system-ui, sans-serif;
+    }
+    body {
+      background: #000000;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      margin: 0;
+    }
+    .app-card {
+      max-width: 620px;
+      width: 100%;
+      background: #0a0a0a;
+      border-radius: 42px;
+      box-shadow: 0 0 0 2px #FFD700, 0 12px 30px rgba(255, 215, 0, 0.25);
+      padding: 24px 22px 30px;
+      border: 1px solid #FFD700;
+    }
+    h1 {
+      font-weight: 900;
+      font-size: 1.9rem;
+      letter-spacing: -0.5px;
+      color: #FFD700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #FFD700;
+      text-transform: uppercase;
+      word-break: break-word;
+    }
+    h1 i {
+      color: #FFD700;
+      font-size: 2.2rem;
+    }
+
+    /* TABS */
+    .icon-tabs {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0 28px;
+    }
+    .tab-btn {
+      background: #000000;
+      border: 3px solid #FFD700;
+      width: 85px;
+      height: 85px;
+      border-radius: 30px;
+      font-size: 2.6rem;
+      color: #FFD700;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #7A5C00, 0 8px 12px rgba(255,215,0,0.2);
+      transition: all 0.1s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+    .tab-btn span {
+      font-size: 0.75rem;
+      font-weight: 900;
+      margin-top: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #FFD700;
+    }
+    .tab-btn.active {
+      background: #FFD700;
+      color: #000000;
+      box-shadow: 0 5px 0 #7A5C00, 0 8px 16px #FFD70080;
+      transform: translateY(3px);
+      border-color: #FFFFFF;
+    }
+    .tab-btn.active span,
+    .tab-btn.active i {
+      color: #000000;
+    }
+    .tab-btn:hover {
+      background: #2a2a00;
+    }
+    .tab-btn.active:hover {
+      background: #FFC800;
+    }
+
+    /* panels */
+    .panel {
+      display: none;
+      background: #0f0f0f;
+      border-radius: 32px;
+      padding: 24px 20px;
+      box-shadow: inset 0 0 0 1px #FFD700, 0 8px 18px rgba(255,215,0,0.1);
+      border: 1px solid #FFD700;
+    }
+    .panel.active {
+      display: block;
+    }
+
+    .goal-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      background: #1a1a00;
+      padding: 14px 18px;
+      border-radius: 60px;
+      margin-bottom: 24px;
+      border: 2px solid #FFD700;
+    }
+    .badge {
+      background: #FFD700;
+      color: #000000;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-weight: 900;
+      font-size: 1.1rem;
+      border: 2px solid black;
+    }
+
+    input, select, button {
+      border-radius: 60px !important;
+    }
+    input, select {
+      background: #000000;
+      border: 3px solid #FFD700;
+      padding: 14px 18px;
+      font-size: 1rem;
+      outline: none;
+      width: 100%;
+      margin: 8px 0 12px;
+      color: #FFD700;
+      font-weight: 600;
+    }
+    input:focus, select:focus {
+      border-color: #FFFFFF;
+      box-shadow: 0 0 8px #FFD700;
+    }
+    input::placeholder {
+      color: #b8a200;
+      opacity: 0.7;
+    }
+    select option {
+      background: #000;
+      color: #FFD700;
+    }
+
+    .btn {
+      background: #FFD700;
+      border: none;
+      color: #000000;
+      font-weight: 900;
+      padding: 14px 22px;
+      font-size: 1rem;
+      border-radius: 60px;
+      cursor: pointer;
+      box-shadow: 0 5px 0 #7A5C00;
+      transition: 0.08s;
+      border: 2px solid #FFD700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .btn-small {
+      padding: 10px 18px;
+      font-size: 0.9rem;
+      box-shadow: 0 3px 0 #7A5C00;
+    }
+    .btn:hover {
+      transform: translateY(2px);
+      box-shadow: 0 3px 0 #7A5C00;
+      background: #FFE033;
+    }
+    .btn:active {
+      transform: translateY(5px);
+      box-shadow: none;
+    }
+
+    .food-list, .log-list {
+      list-style: none;
+      padding: 0;
+      margin: 18px 0 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .food-item, .log-item {
+      background: #0a0a0a;
+      margin: 8px 0;
+      padding: 12px 16px;
+      border-radius: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-left: 12px solid #FFD700;
+      border: 2px solid #FFD700;
+      color: #FFD700;
+      font-weight: 600;
+    }
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #FFD700;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0 6px;
+      transition: 0.1s;
+    }
+    .delete-btn:hover {
+      color: #ffffff;
+      transform: scale(1.1);
+    }
+
+    .search-box {
+      margin-bottom: 16px;
+    }
+    .food-selector {
+      background: #151515;
+      border-radius: 48px;
+      padding: 16px 18px;
+      margin: 16px 0;
+      border: 2px solid #FFD700;
+    }
+    label {
+      color: #FFD700;
+      font-weight: 800;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 900;
+      background: #1e1e00;
+      padding: 16px 18px;
+      border-radius: 60px;
+      margin: 20px 0 10px;
+      border: 2px solid #FFD700;
+      color: #FFD700;
+      font-size: 1.2rem;
+    }
+    .message {
+      padding: 14px 18px;
+      border-radius: 60px;
+      font-weight: 700;
+      background: #000000;
+      border: 2px solid #FFD700;
+      color: #FFD700;
+      margin-top: 6px;
+    }
+    .carryover-note {
+      font-size: 0.9rem;
+      color: #FFDB58;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+    .flex-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    i {
+      margin-right: 6px;
+      color: #FFD700;
+    }
+    h3, h4 {
+      color: #FFD700;
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+    small {
+      color: #ccb000;
+    }
+    #logGoalBadge {
+      background: #FFD700;
+      color: black;
+      font-weight: 900;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      background: #000;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #FFD700;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="app-card">
+  <h1>
+    <i class="fas fa-fire"></i> 
+    COUNT IT FAT AHH
+    <span style="flex:1; text-align:right; font-size:0.85rem; opacity:0.9; color:#FFD700;">⚡24H RESET⚡</span>
+  </h1>
+
+  <!-- 3 ICONS -->
+  <div class="icon-tabs">
+    <button class="tab-btn active" data-tab="goal" id="tabGoalBtn">
+      <i class="fas fa-bullseye"></i>
+      <span>GOAL</span>
+    </button>
+    <button class="tab-btn" data-tab="food" id="tabFoodBtn">
+      <i class="fas fa-utensils"></i>
+      <span>FOOD</span>
+    </button>
+    <button class="tab-btn" data-tab="log" id="tabLogBtn">
+      <i class="fas fa-calculator"></i>
+      <span>LOG</span>
+    </button>
+  </div>
+
+  <!-- GOAL PANEL -->
+  <div id="panelGoal" class="panel active">
+    <div class="goal-header">
+      <span style="color:#FFD700; font-weight:900;"><i class="fas fa-flag-checkered"></i> TODAY'S GOAL</span>
+      <span class="badge" id="goalDisplay">2000 kcal</span>
+    </div>
+    <p style="margin-bottom: 6px; font-weight:700; color:#FFD700;">🎯 SET DAILY TARGET</p>
+    <div class="flex-row">
+      <input type="number" id="goalInput" placeholder="e.g. 2200" min="0" step="50" value="2000">
+      <button class="btn" id="saveGoalBtn">SAVE</button>
+    </div>
+    <p style="margin-top: 16px; font-size:0.9rem; color:#e6c300;"><i class="far fa-clock"></i> REPEATS DAILY · CHANGE ANYTIME</p>
+    <div id="goalCarryoverInfo" class="carryover-note"></div>
+  </div>
+
+  <!-- FOOD PANEL (2nd) -->
+  <div id="panelFood" class="panel">
+    <h3 style="display:flex; gap:8px; color:#FFD700;"><i class="fas fa-plus-circle"></i> ADD FOOD (per 100g)</h3>
+    <input type="text" id="foodNameInput" placeholder="FOOD NAME, e.g. OATS" autocomplete="off">
+    <input type="number" id="foodCalInput" placeholder="KCAL per 100g" min="0" step="1">
+    <button class="btn" id="addFoodBtn" style="width:100%;">➕ SAVE TO LIBRARY</button>
+    
+    <div style="margin-top: 28px;">
+      <h4><i class="fas fa-database"></i> YOUR FOOD DATABASE</h4>
+      <ul class="food-list" id="foodListContainer"></ul>
+      <p style="font-size:0.8rem; color:#FFD700;"><i class="far fa-trash-alt"></i> CLICK ❌ TO REMOVE</p>
+    </div>
+  </div>
+
+  <!-- LOG PANEL (3rd) -->
+  <div id="panelLog" class="panel">
+    <div style="display:flex; justify-content:space-between;">
+      <h3><i class="fas fa-search"></i> COUNT & TRACK</h3>
+      <span class="badge" id="logGoalBadge">GOAL: 2000</span>
+    </div>
+    <div class="search-box">
+      <input type="text" id="searchFoodInput" placeholder="🔍 SEARCH FOOD..." autocomplete="off">
+    </div>
+    <div class="food-selector">
+      <label><i class="fas fa-hamburger"></i> SELECT FOOD:</label>
+      <select id="foodSelect" style="width:100%; padding:12px; border-radius:60px; margin:8px 0;">
+        <option value="">-- CHOOSE A FOOD --</option>
+      </select>
+      <div class="flex-row">
+        <input type="number" id="weightInput" placeholder="GRAMS" min="1" step="10" value="100">
+        <button class="btn btn-small" id="addEntryBtn">➕ ADD</button>
+      </div>
+      <small>CALORIES = (KCAL/100g) × WEIGHT/100</small>
+    </div>
+
+    <h4 style="margin-top:20px;"><i class="fas fa-list-ul"></i> TODAY'S INTAKE</h4>
+    <ul class="log-list" id="logEntriesContainer"></ul>
+
+    <div class="stat-row">
+      <span>🔥 TOTAL CONSUMED</span>
+      <span id="totalCalDisplay">0 kcal</span>
+    </div>
+    <div id="comparisonMessage" class="message"></div>
+    <div id="carryoverMessage" class="carryover-note"></div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+
+    const STORAGE_GOAL = 'calorie_goal_base_yb';
+    const STORAGE_FOODS = 'calorie_foods_yb';
+    const STORAGE_ENTRIES = 'calorie_daily_entries_yb';
+    const STORAGE_LAST_DATE = 'calorie_last_date_yb';
+    const STORAGE_CARRYOVER = 'calorie_carryover_yb';
+
+    let goalBase = 2000;
+    let carryover = 0;
+    let foods = [];
+    let dailyEntries = [];
+    
+    const panelGoal = document.getElementById('panelGoal');
+    const panelFood = document.getElementById('panelFood');
+    const panelLog = document.getElementById('panelLog');
+    const tabs = document.querySelectorAll('.tab-btn');
+    const goalDisplay = document.getElementById('goalDisplay');
+    const goalInput = document.getElementById('goalInput');
+    const saveGoalBtn = document.getElementById('saveGoalBtn');
+    const foodNameInput = document.getElementById('foodNameInput');
+    const foodCalInput = document.getElementById('foodCalInput');
+    const addFoodBtn = document.getElementById('addFoodBtn');
+    const foodListContainer = document.getElementById('foodListContainer');
+    const searchFoodInput = document.getElementById('searchFoodInput');
+    const foodSelect = document.getElementById('foodSelect');
+    const weightInput = document.getElementById('weightInput');
+    const addEntryBtn = document.getElementById('addEntryBtn');
+    const logEntriesContainer = document.getElementById('logEntriesContainer');
+    const totalCalDisplay = document.getElementById('totalCalDisplay');
+    const comparisonMessage = document.getElementById('comparisonMessage');
+    const carryoverMessage = document.getElementById('carryoverMessage');
+    const logGoalBadge = document.getElementById('logGoalBadge');
+    const goalCarryoverInfo = document.getElementById('goalCarryoverInfo');
+
+    function getTodayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function getEffectiveGoal() {
+      return Math.max(0, goalBase - carryover);
+    }
+
+    function refreshGoalUI() {
+      const eff = getEffectiveGoal();
+      goalDisplay.textContent = `${eff} kcal`;
+      logGoalBadge.textContent = `🎯 ${eff}`;
+      if (carryover > 0) {
+        goalCarryoverInfo.innerHTML = `<i class="fas fa-balance-scale"></i> YESTERDAY'S EXCESS: ${carryover} KCAL → TODAY'S TARGET REDUCED.`;
+      } else {
+        goalCarryoverInfo.innerHTML = '';
+      }
+    }
+
+    function persistGoal() { localStorage.setItem(STORAGE_GOAL, goalBase); }
+    function persistCarryover() { localStorage.setItem(STORAGE_CARRYOVER, carryover); }
+    function persistFoods() { localStorage.setItem(STORAGE_FOODS, JSON.stringify(foods)); }
+    function persistEntries() { localStorage.setItem(STORAGE_ENTRIES, JSON.stringify(dailyEntries)); }
+    function persistLastDate(dateStr) { localStorage.setItem(STORAGE_LAST_DATE, dateStr); }
+
+    function loadFromStorage() {
+      const savedGoal = localStorage.getItem(STORAGE_GOAL);
+      if (savedGoal !== null) goalBase = Number(savedGoal) || 2000;
+      else goalBase = 2000;
+      
+      const savedCarry = localStorage.getItem(STORAGE_CARRYOVER);
+      carryover = savedCarry ? Number(savedCarry) : 0;
+      
+      const savedFoods = localStorage.getItem(STORAGE_FOODS);
+      if (savedFoods) {
+        try { foods = JSON.parse(savedFoods); } catch(e){ foods = []; }
+      } else {
+        foods = [
+          { id: '1', name: 'OATS', calPer100: 389 },
+          { id: '2', name: 'CHICKEN BREAST', calPer100: 165 },
+          { id: '3', name: 'BROCCOLI', calPer100: 34 },
+        ];
+      }
+
+      const today = getTodayStr();
+      const lastDate = localStorage.getItem(STORAGE_LAST_DATE);
+      
+      if (lastDate !== today) {
+        const savedEntries = localStorage.getItem(STORAGE_ENTRIES);
+        let yesterdayEntries = [];
+        if (savedEntries) { try { yesterdayEntries = JSON.parse(savedEntries); } catch(e){} }
+        const yesterdayTotal = yesterdayEntries.reduce((sum, e) => sum + (e.calories || 0), 0);
+        if (yesterdayTotal > goalBase) {
+          carryover = yesterdayTotal - goalBase;
+        } else {
+          carryover = 0;
+        }
+        dailyEntries = [];
+        persistEntries();
+        persistCarryover();
+        persistLastDate(today);
+      } else {
+        const savedEntries = localStorage.getItem(STORAGE_ENTRIES);
+        if (savedEntries) { try { dailyEntries = JSON.parse(savedEntries); } catch(e){ dailyEntries = []; } }
+        else dailyEntries = [];
+      }
+      
+      persistLastDate(today);
+      persistFoods();
+      
+      refreshGoalUI();
+      renderFoodList();
+      populateFoodSelect();
+      renderLogEntries();
+      updateTotalAndComparison();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function renderFoodList() {
+      if (!foodListContainer) return;
+      if (foods.length === 0) {
+        foodListContainer.innerHTML = '<li style="padding:12px; color:#FFD700;">✨ NO FOODS YET. ADD ONE!</li>';
+        return;
+      }
+      foodListContainer.innerHTML = foods.map(f => `
+        <li class="food-item">
+          <span><strong>${escapeHtml(f.name)}</strong> · ${f.calPer100} KCAL/100g</span>
+          <button class="delete-btn" data-food-id="${f.id}" title="Delete food"><i class="fas fa-times-circle"></i></button>
+        </li>
+      `).join('');
+      document.querySelectorAll('[data-food-id]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = btn.dataset.foodId;
+          deleteFoodById(id);
+        });
+      });
+    }
+
+    function deleteFoodById(id) {
+      foods = foods.filter(f => f.id !== id);
+      persistFoods();
+      renderFoodList();
+      populateFoodSelect();
+    }
+
+    function populateFoodSelect(filterText = '') {
+      const term = filterText.trim().toLowerCase();
+      let filtered = foods;
+      if (term) filtered = foods.filter(f => f.name.toLowerCase().includes(term));
+      if (filtered.length === 0) {
+        foodSelect.innerHTML = '<option value="">-- NO MATCH --</option>';
+        return;
+      }
+      foodSelect.innerHTML = '<option value="">-- SELECT FOOD --</option>' + 
+        filtered.map(f => `<option value="${f.id}" data-cal="${f.calPer100}">${escapeHtml(f.name)} (${f.calPer100} kcal)</option>`).join('');
+    }
+
+    function renderLogEntries() {
+      if (dailyEntries.length === 0) {
+        logEntriesContainer.innerHTML = '<li style="padding:12px; color:#FFD700;">🍽️ NO ENTRIES YET</li>';
+        return;
+      }
+      logEntriesContainer.innerHTML = dailyEntries.map(entry => `
+        <li class="log-item">
+          <span><i class="fas fa-utensil-spoon"></i> ${escapeHtml(entry.name)} · ${entry.weight}g = <strong>${entry.calories} kcal</strong></span>
+          <button class="delete-btn" data-entry-id="${entry.id}" title="Remove"><i class="fas fa-trash"></i></button>
+        </li>
+      `).join('');
+      document.querySelectorAll('[data-entry-id]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = btn.dataset.entryId;
+          dailyEntries = dailyEntries.filter(e => e.id !== id);
+          persistEntries();
+          renderLogEntries();
+          updateTotalAndComparison();
+        });
+      });
+    }
+
+    function updateTotalAndComparison() {
+      const total = dailyEntries.reduce((sum, e) => sum + e.calories, 0);
+      totalCalDisplay.textContent = `${Math.round(total)} kcal`;
+      const effectiveGoal = getEffectiveGoal();
+      const diff = effectiveGoal - total;
+      
+      let msg = '';
+      if (total === effectiveGoal) {
+        msg = `✅ PERFECT! EXACTLY ${effectiveGoal} KCAL.`;
+      } else if (total < effectiveGoal) {
+        msg = `🍃 YOU NEED ${diff} MORE KCAL TO REACH GOAL.`;
+      } else {
+        const excess = total - effectiveGoal;
+        msg = `⚠️ OVER BY ${excess} KCAL. EXCESS WILL CARRY TO TOMORROW.`;
+      }
+      comparisonMessage.textContent = msg;
+      
+      if (carryover > 0) {
+        carryoverMessage.innerHTML = `<i class="fas fa-arrow-right"></i> GOAL REDUCED BY ${carryover} KCAL FROM YESTERDAY.`;
+      } else {
+        carryoverMessage.innerHTML = total > effectiveGoal ? 
+          `<i class="fas fa-exclamation-triangle"></i> SURPLUS WILL BE DEDUCTED TOMORROW.` : '';
+      }
+    }
+
+    function switchTab(tabId) {
+      panelGoal.classList.remove('active');
+      panelFood.classList.remove('active');
+      panelLog.classList.remove('active');
+      tabs.forEach(btn => btn.classList.remove('active'));
+      
+      if (tabId === 'goal') {
+        panelGoal.classList.add('active');
+        document.querySelector('[data-tab="goal"]').classList.add('active');
+        refreshGoalUI();
+      } else if (tabId === 'food') {
+        panelFood.classList.add('active');
+        document.querySelector('[data-tab="food"]').classList.add('active');
+        renderFoodList();
+      } else if (tabId === 'log') {
+        panelLog.classList.add('active');
+        document.querySelector('[data-tab="log"]').classList.add('active');
+        populateFoodSelect(searchFoodInput.value);
+        renderLogEntries();
+        updateTotalAndComparison();
+      }
+    }
+
+    function addNewFood() {
+      const name = foodNameInput.value.trim();
+      const cal = parseFloat(foodCalInput.value);
+      if (!name) { alert('ENTER FOOD NAME'); return; }
+      if (isNaN(cal) || cal < 0) { alert('VALID CALORIES NEEDED'); return; }
+      const newFood = {
+        id: Date.now() + '-' + Math.random().toString(36),
+        name: name,
+        calPer100: Math.round(cal)
+      };
+      foods.push(newFood);
+      persistFoods();
+      renderFoodList();
+      populateFoodSelect(searchFoodInput.value);
+      foodNameInput.value = '';
+      foodCalInput.value = '';
+    }
+
+    function addLogEntry() {
+      const select = foodSelect;
+      const selectedOption = select.options[select.selectedIndex];
+      if (!selectedOption || !selectedOption.value) {
+        alert('SELECT A FOOD FIRST');
+        return;
+      }
+      const foodId = selectedOption.value;
+      const food = foods.find(f => f.id === foodId);
+      if (!food) return;
+      
+      const weight = parseFloat(weightInput.value);
+      if (isNaN(weight) || weight <= 0) {
+        alert('VALID WEIGHT (g)');
+        return;
+      }
+      const calories = Math.round((food.calPer100 * weight) / 100);
+      const entry = {
+        id: Date.now() + '-' + Math.random().toString(36),
+        foodId: food.id,
+        name: food.name,
+        calPer100: food.calPer100,
+        weight: weight,
+        calories: calories
+      };
+      dailyEntries.push(entry);
+      persistEntries();
+      renderLogEntries();
+      updateTotalAndComparison();
+      weightInput.value = '100';
+    }
+
+    function filterFoodSelect() {
+      populateFoodSelect(searchFoodInput.value);
+    }
+
+    function init() {
+      loadFromStorage();
+      
+      tabs.forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      });
+      
+      saveGoalBtn.addEventListener('click', () => {
+        const newGoal = parseFloat(goalInput.value);
+        if (isNaN(newGoal) || newGoal < 0) { alert('INVALID GOAL'); return; }
+        goalBase = Math.round(newGoal);
+        persistGoal();
+        refreshGoalUI();
+        updateTotalAndComparison();
+        goalInput.value = goalBase;
+      });
+      
+      addFoodBtn.addEventListener('click', addNewFood);
+      addEntryBtn.addEventListener('click', addLogEntry);
+      searchFoodInput.addEventListener('input', filterFoodSelect);
+      
+      goalInput.value = goalBase;
+      refreshGoalUI();
+    }
+
+    init();
+  })();
+</script>
+</body>
+</html>
