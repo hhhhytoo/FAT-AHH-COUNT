@@ -243,7 +243,7 @@
       <span style="font-weight:900; color:#FFD700;">SAVED BALANCE:</span>
       <span style="font-size:2rem; font-weight:900; color:#FFD700;" id="bankBalanceDisplay">0 kcal</span>
     </div>
-    <p style="color:#FFD700;">Deficits add, overages deduct automatically.</p>
+    <p style="color:#FFD700;">Deficits add, overages deduct automatically (only if you logged).</p>
     <div style="margin:20px 0;">
       <label>USE FROM BANK TODAY:</label>
       <input type="number" id="bankUseInput" placeholder="kcal to add to goal" min="0" value="0">
@@ -262,16 +262,15 @@
     const STORAGE_FOODS = 'fat_foods';
     const STORAGE_ENTRIES = 'fat_entries';
     const STORAGE_LAST_DATE = 'fat_lastdate';
-    const STORAGE_BANK = 'fat_bank';               // saved balance
-    const STORAGE_EXTRA_STATE = 'fat_extra_state'; // { date, extra }
+    const STORAGE_BANK = 'fat_bank';
+    const STORAGE_EXTRA_STATE = 'fat_extra_state';
 
     let goalBase = 2000;
     let foods = [];
     let dailyEntries = [];
     let savedBalance = 0;
-    let dailyExtra = 0;        // extra allowance applied from bank today
+    let dailyExtra = 0;
 
-    // DOM elements
     const panels = {
       goal: document.getElementById('panelGoal'),
       food: document.getElementById('panelFood'),
@@ -316,7 +315,6 @@
       bankBalanceDisplay.textContent = `${savedBalance} kcal`;
     }
 
-    // Persistence
     function persistGoal() { localStorage.setItem(STORAGE_GOAL, goalBase); }
     function persistFoods() { localStorage.setItem(STORAGE_FOODS, JSON.stringify(foods)); }
     function persistEntries() { localStorage.setItem(STORAGE_ENTRIES, JSON.stringify(dailyEntries)); }
@@ -326,33 +324,44 @@
     }
 
     function loadFromStorage() {
-      // goal
       goalBase = Number(localStorage.getItem(STORAGE_GOAL)) || 2000;
-      // foods
       const savedFoods = localStorage.getItem(STORAGE_FOODS);
       foods = savedFoods ? JSON.parse(savedFoods) : [
         { id: '1', name: 'OATS', calPer100: 389 },
         { id: '2', name: 'CHICKEN BREAST', calPer100: 165 },
         { id: '3', name: 'BROCCOLI', calPer100: 34 }
       ];
-      // bank
       savedBalance = Number(localStorage.getItem(STORAGE_BANK)) || 0;
-      
+
       const today = getTodayStr();
       const lastDate = localStorage.getItem(STORAGE_LAST_DATE);
       const extraState = JSON.parse(localStorage.getItem(STORAGE_EXTRA_STATE) || '{}');
-      
+
       if (lastDate !== today) {
-        // Process yesterday's leftovers using yesterday's extra allowance
+        // Process previous day's data
         const yesterdayExtra = (extraState.date === lastDate) ? (extraState.extra || 0) : 0;
         const savedEntries = localStorage.getItem(STORAGE_ENTRIES);
         let yesterdayEntries = [];
-        if (savedEntries) { try { yesterdayEntries = JSON.parse(savedEntries); } catch(e){} }
+        if (savedEntries) {
+          try { yesterdayEntries = JSON.parse(savedEntries); } catch(e) {}
+        }
         const yesterdayTotal = yesterdayEntries.reduce((sum, e) => sum + (e.calories || 0), 0);
         const yesterdayEffectiveGoal = goalBase + yesterdayExtra;
-        const leftover = yesterdayEffectiveGoal - yesterdayTotal; // positive = deficit, negative = excess
-        savedBalance += leftover;  // deficits increase bank, excess reduces it
-        // Reset daily extra for new day
+        const leftover = yesterdayEffectiveGoal - yesterdayTotal;
+
+        // Only prompt if there were entries yesterday
+        if (yesterdayEntries.length > 0) {
+          if (leftover > 0) {
+            const save = confirm(`Yesterday you had ${leftover} kcal left.\nDo you want to save it to the bank?`);
+            if (save) savedBalance += leftover;
+          } else if (leftover < 0) {
+            const deduct = confirm(`Yesterday you exceeded by ${-leftover} kcal.\nDo you want to deduct it from the bank?`);
+            if (deduct) savedBalance += leftover; // leftover is negative
+          }
+          // if leftover === 0, no prompt
+        }
+
+        // Reset for new day
         dailyExtra = 0;
         dailyEntries = [];
         persistEntries();
@@ -360,12 +369,11 @@
         persistExtraState();
         localStorage.setItem(STORAGE_LAST_DATE, today);
       } else {
-        // same day: load extra & entries
         dailyExtra = (extraState.date === today) ? (extraState.extra || 0) : 0;
         const savedEntries = localStorage.getItem(STORAGE_ENTRIES);
         dailyEntries = savedEntries ? JSON.parse(savedEntries) : [];
       }
-      
+
       localStorage.setItem(STORAGE_LAST_DATE, today);
       persistFoods();
       refreshGoalUI();
@@ -448,7 +456,6 @@
       if (tabId === 'bank') refreshGoalUI();
     }
 
-    // Apply from bank
     function applyBank() {
       const amount = parseFloat(bankUseInput.value);
       if (isNaN(amount) || amount <= 0) { alert('Enter positive amount'); return; }
@@ -462,7 +469,6 @@
       bankUseInput.value = '';
     }
 
-    // Event listeners
     function init() {
       loadFromStorage();
       
